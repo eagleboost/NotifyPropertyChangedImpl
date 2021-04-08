@@ -13,7 +13,7 @@ namespace NotifyPropertyChangedApp.Unity
   /// <summary>
   /// Inspired by https://grahammurray.wordpress.com/2010/04/13/dynamically-generating-types-to-implement-inotifypropertychanged/
   /// </summary>
-  public class NotifyPropertyChangedProxy
+  public class NotifyPropertyChangedImpl
   {
     private static readonly MethodAttributes DefaultMethodAttributes =
       MethodAttributes.Public |
@@ -35,22 +35,22 @@ namespace NotifyPropertyChangedApp.Unity
     
     private static readonly ConcurrentDictionary<Type, Type> TypeMap = new ConcurrentDictionary<Type, Type>();
 
-    public static Type GetProxyType(Type baseType)
+    public static Type GetType(Type baseType)
     {
       if (!baseType.IsSubclassOf<IAutoNotifyPropertyChanged>())
       {
         throw new InvalidOperationException();
       }
 
-      return TypeMap.GetOrAdd(baseType, CreateProxyType);
+      return TypeMap.GetOrAdd(baseType, CreateImplType);
     }
     
-    private static Type CreateProxyType(Type baseType)
+    private static Type CreateImplType(Type baseType)
     {
       var assemblyName = new AssemblyName {Name = "<NotifyPropertyChanged>_Assembly"};
       var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
       var moduleBuilder = assemblyBuilder.DefineDynamicModule("<NotifyPropertyChanged>_Module");
-      var typeName = GetProxyTypeName(baseType);
+      var typeName = GetImplTypeName(baseType);
       var typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public, baseType, new [] {typeof(INotifyPropertyChanged)});
 
       var eventFieldBuilder = EmitPropertyChangedField(typeBuilder);
@@ -173,9 +173,9 @@ namespace NotifyPropertyChangedApp.Unity
       setMethodWrapperIl.Emit(OpCodes.Ret);
     }
     
-    private static string GetProxyTypeName(Type type)
+    private static string GetImplTypeName(Type type)
     {
-      return $"<NotifyPropertyChanged>_Proxy_{type.Name}";
+      return $"<NotifyPropertyChanged>_Impl_{type.Name}";
     }
 
     /// <summary>

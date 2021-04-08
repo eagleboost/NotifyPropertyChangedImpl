@@ -1,4 +1,4 @@
-namespace AutoPropertyInjectionApp.Core
+namespace NotifyPropertyChangedApp.Core
 {
   using System;
 
