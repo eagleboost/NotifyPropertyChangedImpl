@@ -1,0 +1,1 @@
+Please visit [Unity Container (2) Implementing the INotifyPropertyChanged Interface](https://eagleboost.com/2021/04/06/Unity-Container-(2)-Implementing-the-INotifyPropertyChanged-Interface/) for more details
